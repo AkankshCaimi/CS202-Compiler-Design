@@ -1,8 +1,22 @@
 # Compiler Design for B-- 
+---------------------
+## Table of Contents
 
+  - [About](#about)
+  - [Variables](#variables)
+  - [Precedence of Operators](#precedence-of-operators)
+    - [Arithmetic Operators](#arithematic-operators)
+    - [Relational Operators](#relational-operators)
+    - [Logical Operators](#logical-operators)
+  - [Statements](#statements)
+  - [Authors](#authors)
+
+---------------------
 ## About
 
 B-- is a toy programming language based on BASIC programming language. It is made using **lex** and **bison**.
+
+---------------------
 
 ## Variables
 
@@ -10,7 +24,10 @@ B-- is a toy programming language based on BASIC programming language. It is mad
 2. Data Types: Numeric – Integer (%), Single Precision (!), Double Precision (#) & Strings ($).
 3. Type declaration uses special characters along with variable names as given above. Example: P1# (double precision), N$ (string), A9 (integer), M! (single precision)
 
+---------------------
+
 ## Precedence of Operators
+
 ### Arithematic Operators:
 | Operator | Operation | Example |
 | --- | --- | --- |
@@ -19,7 +36,8 @@ B-- is a toy programming language based on BASIC programming language. It is mad
 | - | Negation | -X |
 | *, / | Multiplication / Division | X * Y, X / Y |
 | +, - | Addition / Subtraction | X + Y, X - Y |
-### Realtional Operators:
+
+### Relational Operators:
 | Operator | Operation | Example |
 | --- | --- | --- |
 | = | Equality | X = Y |
@@ -28,9 +46,14 @@ B-- is a toy programming language based on BASIC programming language. It is mad
 | > | Greater Than | X > Y |
 | <= | Less than or equal to | X <= Y |
 | >= | Greater than or equal to | X >= Y |
+
 ### Logical Operators: 
 NOT, AND, OR, XOR
-<b>NOTE:</b>In case of equal precedence evaluation for operators is done from left-to-right.
+
+<b>NOTE:    </b>In case of equal precedence evaluation for operators is done from left-to-right.
+
+---------------------
+
 ## Statements
 1. The **DATA** statement is used to contain values that will be later used by the <b>READ</b> statement. Example:
 
@@ -92,8 +115,10 @@ line immediately following the <b>GOSUB</b> that invoked the subroutine.
 
 ## How to Compile and Run the Program
 
+---------------------
 
 ## Authors
+
   Ajaybeer Singh (2021CSB1063)
   
   Akanksh Caimi (2021CSB1064)
