@@ -2,13 +2,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
+int yylex();
 #include "symbol.h"
+void yyerror(char const *);
+extern FILE *yyin,*yyout,*lex_tokkens;
 %}
 
-%token NUM ID TYPE TYPE_INTEGER TYPE_SINGLE TYPE_DOUBLE TYPE_STRING
-%token LET REM PRINT IF THEN ELSE ENDIF INPUT TYPE_DECL END
+%token <num> NUM 
+%toekn <str> ID 
+%token <str> STRING
+%token TYPE TYPE_INTEGER TYPE_SINGLE TYPE_DOUBLE TYPE_STRING
+%token LET REM PRINT IF THEN ELSE ENDIF INPUT TYPE_DECL END FOR NEXT
+%token RETURN STOP GOSUB GOTO DIM DEF FUNC_ID
+%token ID GREATER_THAN LESS_THAN COMPARE_EQUAL LESS_THAN_EQUAL
+%token GREATER_THAN_EQUAL COMPARE_NOT_EQUAL ASSIGN PLUS MINUS DIV MUL EXPO
 
-%left '+' '-'
+
+%left PLUS MINUS
 %left '*' '/'
 %nonassoc '<' '>' '='
 
@@ -23,7 +34,7 @@ statements : stmt
            | statements stmt
            ;
 
-stmt : LET ID '=' expr ';'
+stmt : LET ID ASSIGN expr SEMI
     {
         set_value($2, $4);
         free_expr($4);
@@ -115,7 +126,7 @@ int yylex() {
     int c = getchar();
 
     /* skip whitespace */
-    while (c == ' ' || c == '\t' || c == '\n') {
+    while (c == ' ' || c == '\n') {
         c = getchar();
     }
 
@@ -184,6 +195,14 @@ int yylex() {
         }
     }
 }
-     
-               
+int main(){
+    yyin=fopen("test.bmm","r");
+    yyout=fopen("parser.txt","w");
+    lexout=fopen("lexer.txt","w");
+    yyparse();
+    return 0;
+}
 
+void yyerror(char const *s){
+    printf("Syntax Error\n");
+}
