@@ -2,65 +2,66 @@
     #include <stdio.h>
     #include <string.h>
     #include <math.h>
-    FILE *lex_tokkens;
     #include "bminus.tab.h"
+    FILE *lex out_put;
 %}
 
 %%
-[\n][0-9]{1-4}              { fprintf (lex_tokkens,"NEW_LINE\n");return NEW_LINE; }
-[-]?[0-9]+                  { fprintf (lex_tokkens,"INTEGER : %d\n",yylval.num = atoi(yytext));yylval.num = atoi(yytext); return NUM; }
-[\(]                        { fprintf (lex_tokkens,"LEFT_BRAC\n");return LEFT_BRAC; }
-[\)]                        { fprintf (lex_tokkens,"RIGHT_BRAC\n");return RIGHT_BRAC; }
-","                         { fprintf (lex_tokkens,"COMMA\n"); return COMMA; }
-";"                         { fprintf (lex_tokkens,"SEMI\n"); return SEMI; }
-(\"[a-zA-Z0-9]*\")          { fprintf (lex_tokkens, "TYPE : string"); yylval.str=strdup(yytext); return STRING;}
+[\n][0-9]{1,4}              { fprintf(lex_output,"NEW_LINE\n");return NEW_LINE; }
+[0-9]+/.[0-9]+              { fprintf(lex_output,"FLOAT : %f\n",yylval.num = atoi(yytext));yylval.num = atoi(yytext); return FLOAT; }
+[0-9]+                      { fprintf(lex_output,"INTEGER : %d\n",yylval.num = atoi(yytext));yylval.num = atoi(yytext); return NUM; }
 
-"REM".*                     { fprintf (lex_tokkens,"COMMENTS\n");/* ignore comments */ }
-"LET"                       { fprintf (lex_tokkens,"LET\n");return LET; }
-"IF"                        { fprintf (lex_tokkens,"IF\n");return IF; }
-"THEN"                      { fprintf (lex_tokkens,"THEN\n");return THEN; }
-"ELSE"                      { fprintf (lex_tokkens,"ELSE\n");return ELSE; }
-"ENDIF"                     { fprintf (lex_tokkens,"ENDIF\n");return ENDIF; }
-"PRINT"                     { fprintf (lex_tokkens,"PRINT\n");return PRINT; }
-"INPUT"                     { fprintf (lex_tokkens,"INPUT\n");return INPUT; }
-"TYPE"                      { fprintf (lex_tokkens,"TYPE_DECL\n");return TYPE_DECL; }
-"END"                       { fprintf (lex_tokkens,"END\n");return END; }
-"FOR"                       { fprintf (lex_tokkens,"FOR\n");return FOR; }
-"NEXT"                      { fprintf (lex_tokkens,"NEXT\n");return NEXT; }
-"RETURN"                    { fprintf (lex_tokkens,"RETURN\n");return RETURN; }
-"STOP"                      { fprintf (lex_tokkens,"STOP\n");return STOP; }
-"GOSUB"                     { fprintf (lex_tokkens,"GOSUB\n");return GOSUB; }
-"GOTO"                      { fprintf (lex_tokkens,"GOTO\n");return GOTO; }
-"DIM"                       { fprintf (lex_tokkens,"DIM\n");return DIM; }
-"DEF"                       { fprintf (lex_tokkens,"DEF\n");return DEF; }
-[F][N][A-Z]                 { fprintf (lex_tokkens,"FUNCTION ID : %s\n", yytext); yylval.str=strdup(yytext); return FUNC_ID;}
+[\(]                        { fprintf(lex_output,"LEFT_BRAC\n");return LEFT_BRAC; }
+[\)]                        { fprintf(lex_output,"RIGHT_BRAC\n");return RIGHT_BRAC; }
+","                         { fprintf(lex_output,"COMMA\n"); return COMMA; }
+";"                         { fprintf(lex_output,"SEMI\n"); return SEMI; }
+(\"[a-zA-Z0-9]*\")          { fprintf(lex_output,"TYPE : STRING"); yylval.str=strdup(yytext); return STRING;}
+
+"REM".*                     { fprintf(lex_output,"COMMENTS\n");/* ignore comments */ }
+"LET"                       { fprintf(lex_output,"LET\n");return LET; }
+"IF"                        { fprintf(lex_output,"IF\n");return IF; }
+"THEN"                      { fprintf(lex_output,"THEN\n");return THEN; }
+"ELSE"                      { fprintf(lex_output,"ELSE\n");return ELSE; }
+"ENDIF"                     { fprintf(lex_output,"ENDIF\n");return ENDIF; }
+"PRINT"                     { fprintf(lex_output,"PRINT\n");return PRINT; }
+"INPUT"                     { fprintf(lex_output,"INPUT\n");return INPUT; }
+"TYPE"                      { fprintf(lex_output,"TYPE_DECL\n");return TYPE_DECL; }
+"END"                       { fprintf(lex_output,"END\n");return END; }
+"FOR"                       { fprintf(lex_output,"FOR\n");return FOR; }
+"NEXT"                      { fprintf(lex_output,"NEXT\n");return NEXT; }
+"RETURN"                    { fprintf(lex_output,"RETURN\n");return RETURN; }
+"STOP"                      { fprintf(lex_output,"STOP\n");return STOP; }
+"GOSUB"                     { fprintf(lex_output,"GOSUB\n");return GOSUB; }
+"GOTO"                      { fprintf(lex_output,"GOTO\n");return GOTO; }
+"DIM"                       { fprintf(lex_output,"DIM\n");return DIM; }
+"DEF"                       { fprintf(lex_output,"DEF\n");return DEF; }
+[F][N][A-Z]                 { fprintf(lex_output,"FUNCTION ID : %s\n", yytext); yylval.str=strdup(yytext); return FUNC_ID;}
 
 
-[A-Z]\$?                    { yylval.id = *yytext; return ID; }
-[A-Z][0-9]?\$?              { yylval.id = *yytext; return ID; }
-[A-Z]\#                     { yylval.id = *yytext; yylval.type = TYPE_DOUBLE; return ID; }
-[A-Z]\%                     { yylval.id = *yytext; yylval.type = TYPE_INTEGER; return ID; }
-[A-Z]\!                     { yylval.id = *yytext; yylval.type = TYPE_SINGLE; return ID; }
-">"                         { fprintf (lex_tokkens,"GREATER_THAN : >\n"); return GREATER_THAN; }
-"<"                         { fprintf (lex_tokkens,"LESS_THAN : <\n"); return LESS_THAN; }
-"=="                        { fprintf (lex_tokkens,"COMPARE_EQUAL : ==\n"); return COMPARE_EQUAL; }
-"<="                        { fprintf (lex_tokkens,"LESS_THAN_EQUAL : <=\n"); return LESS_THAN_EQUAL; }
-">="                        { fprintf (lex_tokkens,"GREATER_THAN_EQUAL : >=\n"); return GREATER_THAN_EQUAL; }
-"<>"                        { fprintf (lex_tokkens,"COMPARE_NOT_EQUAL : <>\n"); return COMPARE_NOT_EQUAL; }
-"="                         { fprintf (lex_tokkens,"ASSIGN : =\n"); return ASSIGN; }
+[A-Z][0-9]?\$               { fprintf(lex_output,"TYPE : STRING\n");yylval.id = *yytext; yylval.type = TYPE_STRING; return ID; }
+[A-Z][0-9]?\#               { fprintf(lex_output,"TYPE : DOUBLE\n");yylval.id = *yytext; yylval.type = TYPE_DOUBLE; return ID; }
+[A-Z][0-9]?\%?              { fprintf(lex_output,"TYPE : INTEGER\n");yylval.id = *yytext; yylval.type = TYPE_INTEGER; return ID; }
+[A-Z][0-9]?\!               { fprintf(lex_output,"TYPE : SINGLE\n");yylval.id = *yytext; yylval.type = TYPE_SINGLE; return ID; }
+">"                         { fprintf(lex_output,"GREATER_THAN : >\n"); return GREATER_THAN; }
+"<"                         { fprintf(lex_output,"LESS_THAN : <\n"); return LESS_THAN; }
+"=="                        { fprintf(lex_output,"COMPARE_EQUAL : ==\n"); return COMPARE_EQUAL; }
+"<="                        { fprintf(lex_output,"LESS_THAN_EQUAL : <=\n"); return LESS_THAN_EQUAL; }
+">="                        { fprintf(lex_output,"GREATER_THAN_EQUAL : >=\n"); return GREATER_THAN_EQUAL; }
+"<>"                        { fprintf(lex_output,"COMPARE_NOT_EQUAL : <>\n"); return COMPARE_NOT_EQUAL; }
+"="                         { fprintf(lex_output,"ASSIGN : =\n"); return ASSIGN; }
         
-"+"                         { fprintf (lex_tokkens,"PLUS : +\n"); return PLUS; }
-"-"                         { fprintf (lex_tokkens,"MINUS : +\n"); return MINUS; }
-"/"                         { fprintf (lex_tokkens,"DIV : /\n"); return DIV; }
-"*"                         { fprintf (lex_tokkens,"MUL : *\n"); return MUL; }
-"^"                         { fprintf (lex_tokkens,"EXPO : ^\n"); return EXPO; }
+"+"                         { fprintf(lex_output,"PLUS : +\n"); return PLUS; }
+"-"                         { fprintf(lex_output,"MINUS : +\n"); return MINUS; }
+"/"                         { fprintf(lex_output,"DIV : /\n"); return DIV; }
+"*"                         { fprintf(lex_output,"MUL : *\n"); return MUL; }
+"^"                         { fprintf(lex_output,"EXPO : ^\n"); return EXPO; }
 
 
-[\t]+                       { yyerror("SYNTEX ERROR! (Tab detected!, Invalid)"); }
-.                           { yyerror("SYNTEX ERROR! (Invalid character)"); }
+[\t]+                       { fprintf(lex_output,"SYNTAX ERROR\n");yyerror("SYNTAX ERROR! (Tab detected!, Invalid)"); }
+.                           { fprintf(lex_output,"SYNTAX ERROR\n");yyerror("SYNTAX ERROR! (Invalid character)"); }
 
 %%
-
-int yywrap() {
+int yy wrap(){
     return 1;
 }
+
