@@ -9,6 +9,7 @@
     - [Relational Operators](#relational-operators)
     - [Logical Operators](#logical-operators)
   - [Statements](#statements)
+  - [Compile and Run Instructions](#how-to-compile-and-run-the-program)
   - [Authors](#authors)
 
 ---------------------
@@ -62,6 +63,7 @@ NOT, AND, OR, XOR
 2. The <b>DEF</b> statement is used to define a user-defined function of one numeric variable or a pseudo-constant. Example:
 
       `DEF FNF(X) = X^4 – 1`
+      
       `DEF FNP = 3.14159`
       
 3. The <b>DIM</b> statement is used to specify non-default sizes of numeric arrays. Example:
@@ -113,7 +115,28 @@ line immediately following the <b>GOSUB</b> that invoked the subroutine.
 
 13. The <b>STOP</b> statement will halt execution of the program immediately.
 
+---------------------
+
 ## How to Compile and Run the Program
+
+1. Clone the repository and extract the zipped files.
+
+2. Open terminal and navigate to the extracted folder using `cd` command.
+
+3. To compile the **lex and yacc file** run the following command:
+
+            $lex BMM_Scanner.l
+            $yacc -d BMM_Parser.y
+
+    This will create a new file `lex.yy.c`, then run the following command:
+
+            $cc lex.yy.c -ll
+
+    Note: Use `-lfl` if `-ll` does not work.
+
+4. To run this file run the following command:
+
+            $./a.out
 
 ---------------------
 
