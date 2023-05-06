@@ -8,15 +8,21 @@ int yylex();
 void yyerror(char const *);
 extern FILE *yyin,*yyout,*lex_tokkens;
 %}
+%union{
+    int num;
+    char *str;
+    float flt;
+    struct expr* e;
 
-%token <num> NUM 
-%token <float> FLOAT
-%token <str> ID 
-%token <str> STRING
+}
+%token  NUM 
+%token  FLOAT
+%token  ID 
+%token  STRING
 %token TYPE TYPE_INTEGER TYPE_SINGLE TYPE_DOUBLE TYPE_STRING
 %token LET REM PRINT IF THEN ELSE ENDIF INPUT TYPE_DECL END FOR NEXT
-%token RETURN STOP GOSUB GOTO DIM DEF FUNC_ID SEMI
-%token GREATER_THAN LESS_THAN COMPARE_EQUAL LESS_THAN_EQUAL
+%token RETURN STOP GOSUB GOTO DIM DEF FUNC_ID SEMI COMMA NEW_LINE
+%token GREATER_THAN LESS_THAN COMPARE_EQUAL LESS_THAN_EQUAL COMMENT
 %token GREATER_THAN_EQUAL COMPARE_NOT_EQUAL ASSIGN PLUS MINUS DIV MUL EXPO
 
 %left PLUS MINUS
@@ -27,40 +33,21 @@ extern FILE *yyin,*yyout,*lex_tokkens;
 
 %%
 program : statements END
-        {
-            /* execute statements */
-        }
-        ;
 
 statements : stmt
-           | statements stmt
-           ;
+           | stmt statements
+           
+stmt : NUM LET ID ASSIGN expr SEMI NEW_LINE
+     | NUM REM capital NEW_LINE
+     | NUM PRINT expr SEMI NEW_LINE
+     | NUM IF condition THEN statements NEW_LINE
+     | NUM INPUT in NEW_LINE
+     | NUM DEF 
+     | NUM GOTO NUM
+     | NUM RETURN
 
-stmt : LET ID ASSIGN expr SEMI
-    {
-        set_value($2, $4);
-        free_expr($4);
-    }
-    | REM
-    {
-        free_stmt($1);
-    }
-    | PRINT expr ';'
-    {
-        print_value($2);
-        free_expr($2);
-    }
-    | IF condition THEN statements ELSE statements ENDIF
-    {
-        free_condition($2);
-        free_stmt_list($4);
-        free_stmt_list($6);
-    }
-    | INPUT ID ';'
-    {
-        /* read input from user */
-    }
-    | TYPE_DECL ID TYPE ';'
+
+     | TYPE_DECL ID TYPE SEMI
     {
         if ($3 == TYPE_INTEGER) {
             set_type($2, TYPE_INTEGER);
@@ -74,28 +61,33 @@ stmt : LET ID ASSIGN expr SEMI
     }
     ;
 
-condition : expr '<' expr
-          | expr '>' expr
-          | expr '=' expr
+in : ID | ID SEMI in
+
+capital : COMMENT
+        | COMMENT capital
+
+condition : expr LESS_THAN expr
+          | expr GREATER_THAN expr
+          | expr ASSIGN expr
           ;
 
 expr : term
-     | expr '+' term
+     | expr PLUS term
      {
          $$ = create_expr(EXPR_OP, OP_ADD, $1, $3);
      }
-     | expr '-' term
+     | expr MINUS term
      {
          $$ = create_expr(EXPR_OP, OP_SUB, $1, $3);
      }
      ;
 
 term : factor
-     | term '*' factor
+     | term MUL factor
      {
          $$ = create_expr(EXPR_OP, OP_MUL, $1, $3);
      }
-     | term '/' factor
+     | term DIV factor
      {
          $$ = create_expr(EXPR_OP, OP_DIV, $1, $3);
      }
@@ -109,18 +101,18 @@ factor : NUM
        {
            $$ = create_expr(EXPR_VAR, 0, $1, NULL);
        }
-       | ID '(' expr_list ')'
+       | ID LEFT_BRAC expr_list RIGHT_BRAC
        {
            /* function call */
        }
-       | '(' expr ')'
+       | LEFT_BRAC expr RIGHT_BRAC
        {
            $$ = $2;
        }
        ;
 
 expr_list : expr
-          | expr_list ',' expr
+          | expr_list COMMA expr
           ;
 
 %%
@@ -128,9 +120,10 @@ int yylex() {
     int c = getchar();
 
     /* skip whitespace */
-    while (c == ' ' || c == '\n') {
+    while (c == ' ') {
         c = getchar();
     }
+    
 
     /* handle numbers */
     if (isdigit(c)) {
