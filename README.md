@@ -123,20 +123,23 @@ line immediately following the <b>GOSUB</b> that invoked the subroutine.
 
 2. Open terminal and navigate to the extracted folder using `cd` command.
 
-3. To compile the **lex and yacc file** run the following command:
+3. Install Lex and Yacc on your device.
+
+4. To compile the **lex and yacc file** run the following command:
 
             $lex BMM_Scanner.l
             $yacc -d BMM_Parser.y
 
-    This will create a new file `lex.yy.c`, then run the following command:
+    This will create a new file `lex.yy.c`, then run the following command to compile it:
 
-            $cc lex.yy.c -ll
+            $gcc lex.yy.c y.tab.c -o b--
 
-    Note: Use `-lfl` if `-ll` does not work.
 
-4. To run this file run the following command:
+5. To run this file run the following command:
 
-            $./a.out
+            $./b--
+            
+6. You will get the desired output in the  `output.txt` file.
 
 ---------------------
 
